@@ -4,7 +4,7 @@
       <template #header>
         <div class="card-header">
           <h2>器械管理</h2>
-          <el-button type="primary" @click="showAddDialog">添加器械</el-button>
+          <el-button type="primary" @click="toAdd">添加器械</el-button>
         </div>
       </template>
 
@@ -59,6 +59,7 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useEquipmentStore } from '../stores/equipment'
+import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
@@ -68,7 +69,7 @@ const dialogVisible = ref(false)
 const isEdit = ref(false)
 const formRef = ref(null)
 const currentId = ref(null)
-
+const router = useRouter()
 const form = reactive({
   name: '',
   description: '',
@@ -80,14 +81,16 @@ const rules = {
   description: [{ required: true, message: '请输入使用说明', trigger: 'blur' }],
   image: [{ required: true, message: '请输入图片URL', trigger: 'blur' }]
 }
-
-const showAddDialog = () => {
-  isEdit.value = false
-  form.name = ''
-  form.description = ''
-  form.image = ''
-  dialogVisible.value = true
+const toAdd = () => {
+  router.push('/add')
 }
+// const showAddDialog = () => {
+//   isEdit.value = false
+//   form.name = ''
+//   form.description = ''
+//   form.image = ''
+//   dialogVisible.value = true
+// }
 
 const handleEdit = (row) => {
   isEdit.value = true
