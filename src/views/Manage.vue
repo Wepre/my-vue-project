@@ -13,11 +13,7 @@
         <el-table-column prop="description" label="使用说明" />
         <el-table-column label="图片">
           <template #default="{ row }">
-            <el-image 
-              style="width: 100px; height: 100px"
-              :src="row.image"
-              :preview-src-list="[row.image]"
-            />
+            <el-image style="width: 100px; height: 100px" :src="row.image" :preview-src-list="[row.image]" />
           </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
@@ -30,11 +26,7 @@
     </el-card>
 
     <!-- 添加/编辑对话框 -->
-    <el-dialog
-      v-model="dialogVisible"
-      :title="isEdit ? '编辑器械' : '添加器械'"
-      width="500px"
-    >
+    <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑器械' : '添加器械'" width="500px">
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <el-form-item label="器械名称" prop="name">
           <el-input v-model="form.name" />
@@ -42,9 +34,12 @@
         <el-form-item label="使用说明" prop="description">
           <el-input type="textarea" v-model="form.description" />
         </el-form-item>
-        <el-form-item label="图片URL" prop="image">
-          <el-input v-model="form.image" />
+        <el-form-item label="上传图片" prop="image">
+          <input type="file" accept="image/*" @change="handleFileChange" name="image" />
         </el-form-item>
+        <div v-if="selectedImage">
+          <img :src="selectedImage" alt="Selected Image" style="width: 200px;" />
+        </div>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -66,6 +61,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 const store = useEquipmentStore()
 const { equipmentList } = storeToRefs(store)
 const dialogVisible = ref(false)
+const selectedImage = ref(false)
 const isEdit = ref(false)
 const formRef = ref(null)
 const currentId = ref(null)
@@ -91,13 +87,23 @@ const toAdd = () => {
 //   form.image = ''
 //   dialogVisible.value = true
 // }
-
+const handleFileChange = (event) => {
+  console.log(event);
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    form.image = e.target.result
+    selectedImage.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
 const handleEdit = (row) => {
   isEdit.value = true
   currentId.value = row.id
   form.name = row.name
   form.description = row.description
   form.image = row.image
+  selectedImage.value=row.image
   dialogVisible.value = true
 }
 
@@ -114,7 +120,7 @@ const handleDelete = (row) => {
 
 const handleSubmit = async () => {
   if (!formRef.value) return
-  
+
   await formRef.value.validate((valid) => {
     if (valid) {
       if (isEdit.value) {
@@ -147,4 +153,4 @@ const handleSubmit = async () => {
   justify-content: flex-end;
   gap: 10px;
 }
-</style> 
+</style>

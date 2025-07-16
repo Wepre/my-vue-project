@@ -20,47 +20,12 @@
         <el-form-item label="使用说明" prop="description">
           <el-input type="textarea" v-model="form.description" />
         </el-form-item>
-        <el-form-item label="图片URL" prop="image">
-          <el-input v-model="form.image" />
+        <el-form-item label="上传图片" prop="image">
+          <input type="file" accept="image/*" @change="handleFileChange" name="image" />
         </el-form-item>
-        <el-form-item label="图片URL" prop="image">
-          <el-upload action="#" list-type="picture-card" :auto-upload="false" :file-list="selectedFiles"
-            :on-success="handleFileChange" :limit="3">
-            <el-icon>
-              <Plus />
-            </el-icon>
-
-            <template #file="{ file }">
-              <div>
-                <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" />
-                <span class="el-upload-list__item-actions">
-                  <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
-                    <el-icon><zoom-in /></el-icon>
-                  </span>
-                  <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleDownload(file)">
-                    <el-icon>
-                      <Download />
-                    </el-icon>
-                  </span>
-                  <span v-if="!disabled" class="el-upload-list__item-delete" @click="handleRemove(file)">
-                    <el-icon>
-                      <Delete />
-                    </el-icon>
-                  </span>
-                </span>
-              </div>
-            </template>
-            <template #tip>
-              <div class="el-upload__tip">
-                请上传jpg/png 文件
-              </div>
-            </template>
-          </el-upload>
-
-          <el-dialog v-model="dialogVisible">
-            <img w-full :src="dialogImageUrl" alt="Preview Image" />
-          </el-dialog>
-        </el-form-item>
+        <div v-if="selectedImage">
+          <img :src="selectedImage" alt="Selected Image" style="width: 200px;" />
+        </div>
       </el-form>
       <template #footer>
         <span class="dialog-footer">
@@ -87,6 +52,8 @@ const store = useEquipmentStore()
 
 const selectedFiles = ref([])
 const formRef = ref(null)
+const isEdit = ref(false)
+const selectedImage = ref(null)
 const currentId = ref(null)
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
@@ -107,6 +74,16 @@ const rules = {
 const router = useRouter()
 const back = () => {
   router.push('/manage')
+}
+const handleFileChange = (event) => {
+  console.log(event);
+  const file = event.target.files[0]
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    form.image = e.target.result
+    selectedImage.value = e.target.result
+  }
+  reader.readAsDataURL(file)
 }
 
 const handleSubmit = async () => {

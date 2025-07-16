@@ -1,35 +1,27 @@
 <template>
-  <el-upload v-model:file-list="fileList" list-type="picture-card" :on-preview="handlePictureCardPreview"
-    :on-remove="handleRemove" :on-change="handleChange">
-    <el-icon>
-      <Plus />
-    </el-icon>
-  </el-upload>
-
-  <el-dialog v-model="dialogVisible">
-    <img w-full :src="dialogImageUrl" alt="Preview Image" />
-  </el-dialog>
+  <div>
+    <input type="file" accept="image/*" @change="handleFileChange" />
+    <div v-if="selectedImage">
+      <img :src="selectedImage" alt="Selected Image" style="width: 200px;" />
+    </div>
+  </div>
 </template>
-
 <script setup>
-import { Plus } from '@element-plus/icons-vue'
-import { ref } from 'vue'
-const fileList = ref([])
-const dialogVisible = ref(false)
-const dialogImageUrl = ref('')
-
-const handlePictureCardPreview = (uploadFile) => {
-  dialogImageUrl.value = uploadFile.url
-  dialogVisible.value = true
-}
-
-const handleRemove = (uploadFile, uploadFiles) => {
-  console.log(uploadFile, uploadFiles)
-}
-
-const handleChange = (uploadFile, uploadFiles) => {
-  console.log(uploadFile)
-  console.log(uploadFiles)
+import { ref } from "vue";
+const selectedImage = ref(null);
+const handleFileChange = (event) => {
+  const file = event.target.files[0];
+  console.log(file);
+  
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      selectedImage.value = e.target.result;
+      console.log(e);
+      
+    };
+    reader.readAsDataURL(file);
+  }
 }
 
 </script>

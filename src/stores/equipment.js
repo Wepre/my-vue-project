@@ -29,6 +29,9 @@ export const useEquipmentStore = defineStore('equipment', {
     
     saveToLocalStorage() {
       localStorage.setItem('equipmentList', JSON.stringify(this.equipmentList))
+      console.log('当前的值为：');
+      console.log(this.equipmentList);
+      
     }
   },
   
